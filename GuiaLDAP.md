@@ -58,7 +58,7 @@ sudo apt update && sudo apt install -y slapd ldap-utils
 
 
 3. **Carga de Datos (LDIF)**
-* Generar el contenido con la herramienta Vercel (opcion Instalacion).
+* Generar el contenido con la [Heramienta de Generacion de LDIF](https://ldap-generate-wxb3.vercel.app/).
 * Crear archivo: `cat <<EOF > /tmp/init.ldif` (pegar contenido) `EOF`.
 * Inyectar: `ldapadd -x -D "cn=admin,dc=amrdaw,dc=local" -W -f /tmp/init.ldif`
 
