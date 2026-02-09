@@ -2,19 +2,19 @@
 
 ## Índice
 
-* [0. Escenario y Herramientas](https://www.google.com/search?q=%230-escenario-y-herramientas)
-* [1. Instalación y Configuración Servidor](https://www.google.com/search?q=%231-instalaci%C3%B3n-y-configuraci%C3%B3n-servidor)
-* [2. Carga Masiva (Uso de la Herramienta HTML)](https://www.google.com/search?q=%232-carga-masiva-uso-de-la-herramienta-html)
-* [3. Configuración del Cliente (Logueo LDAP)](https://www.google.com/search?q=%233-configuraci%C3%B3n-del-cliente-logueo-ldap)
-* [4. Comprobación y Troubleshooting](https://www.google.com/search?q=%234-comprobaci%C3%B3n-y-troubleshooting)
+- [0. Escenario y Herramientas](https://www.google.com/search?q=%230-escenario-y-herramientas)
+- [1. Instalación y Configuración Servidor](https://www.google.com/search?q=%231-instalaci%C3%B3n-y-configuraci%C3%B3n-servidor)
+- [2. Carga Masiva (Uso de la Herramienta HTML)](https://www.google.com/search?q=%232-carga-masiva-uso-de-la-herramienta-html)
+- [3. Configuración del Cliente (Logueo LDAP)](https://www.google.com/search?q=%233-configuraci%C3%B3n-del-cliente-logueo-ldap)
+- [4. Comprobación y Troubleshooting](https://www.google.com/search?q=%234-comprobaci%C3%B3n-y-troubleshooting)
 
 ---
 
 ## 0. Escenario y Herramientas
 
-* **IP Servidor:** `11.0.21.10` | **Dominio:** `amrdaw.local`
-* **IP Cliente:** `11.0.21.50`
-* **Herramienta LDIF:** [🚀 Generador Pro](https://www.google.com/search?q=https://tu-enlace.vercel.app) (Usa esto para crear `init.ldif` y `mod.ldif`).
+- **IP Servidor:** `11.0.21.10` | **Dominio:** `amrdaw.local`
+- **IP Cliente:** `11.0.21.50`
+- **Herramienta LDIF:** [🚀 Generador Pro](https://ldap-generate-wxb3-git-master-alexms-projects-4a3a1365.vercel.app/) (Usa esto para crear `init.ldif` y `mod.ldif`).
 
 ---
 
@@ -27,7 +27,7 @@ sudo dpkg-reconfigure -plow slapd
 
 ```
 
-*(Configuración: DNS=`amrdaw.local`, Org=`amrdaw`, Admin Pass=`tu_clave`, Quitar base de datos: **Sí**)*
+_(Configuración: DNS=`amrdaw.local`, Org=`amrdaw`, Admin Pass=`tu_clave`, Quitar base de datos: **Sí**)_
 
 ---
 
@@ -58,11 +58,11 @@ sudo apt install -y libnss-ldap libpam-ldap ldap-utils
 
 **Durante el asistente de instalación:**
 
-* LDAP server URI: `ldap://11.0.21.10`
-* Distinguished name (Search base): `dc=amrdaw,dc=local`
-* LDAP version: `3`
-* Make local root Database admin: **Yes**
-* Does LDAP database require login? **No**
+- LDAP server URI: `ldap://11.0.21.10`
+- Distinguished name (Search base): `dc=amrdaw,dc=local`
+- LDAP version: `3`
+- Make local root Database admin: **Yes**
+- Does LDAP database require login? **No**
 
 ### 3.2 Configurar NSS (Name Service Switch)
 
@@ -128,11 +128,11 @@ su - pepe
 
 ### Errores en el logueo (Troubleshooting):
 
-| Síntoma | Causa | Solución |
-| --- | --- | --- |
-| `getent` no devuelve nada | Error en URI o Base DN en el cliente | `sudo dpkg-reconfigure ldap-auth-config` |
-| Pide clave pero falla | Password en el LDIF no es SHA o es distinta | Regenera el LDIF con tu herramienta asegurando el Hash |
-| Loguea pero dice "No directory" | Falta la línea en `common-session` | Añadir `pam_mkhomedir.so` |
-| El servidor no responde | Firewall activo | `sudo ufw allow 389/tcp` |
+| Síntoma                         | Causa                                       | Solución                                               |
+| ------------------------------- | ------------------------------------------- | ------------------------------------------------------ |
+| `getent` no devuelve nada       | Error en URI o Base DN en el cliente        | `sudo dpkg-reconfigure ldap-auth-config`               |
+| Pide clave pero falla           | Password en el LDIF no es SHA o es distinta | Regenera el LDIF con tu herramienta asegurando el Hash |
+| Loguea pero dice "No directory" | Falta la línea en `common-session`          | Añadir `pam_mkhomedir.so`                              |
+| El servidor no responde         | Firewall activo                             | `sudo ufw allow 389/tcp`                               |
 
 ---
