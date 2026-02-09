@@ -1,80 +1,92 @@
-# 🌳 Guía LDAP — Ubuntu Server (OpenLDAP) + Cliente
+# GUIA COMPLETA CONFIGURACION DNS Y LDAP
 
-## Índice
+## 1. PREPARACION DEL SERVIDOR (AMRDAW.LOCAL)
 
-- [0. Escenario y Herramientas](https://www.google.com/search?q=%230-escenario-y-herramientas)
-- [1. Instalación y Configuración Servidor](https://www.google.com/search?q=%231-instalaci%C3%B3n-y-configuraci%C3%B3n-servidor)
-- [2. Carga Masiva (Uso de la Herramienta HTML)](https://www.google.com/search?q=%232-carga-masiva-uso-de-la-herramienta-html)
-- [3. Configuración del Cliente (Logueo LDAP)](https://www.google.com/search?q=%233-configuraci%C3%B3n-del-cliente-logueo-ldap)
-- [4. Comprobación y Troubleshooting](https://www.google.com/search?q=%234-comprobaci%C3%B3n-y-troubleshooting)
+**[SERVIDOR]** Ejecutar estas tareas para limpiar el entorno previo y configurar la red.
+
+1. **Cambio de Identidad**
+```bash
+sudo hostnamectl set-hostname ldap-server.amrdaw.local
+
+```
+
+
+2. **Configuracion de Hosts**
+`sudo nano /etc/hosts`
+```text
+127.0.0.1 localhost
+127.0.1.1 ldap-server.amrdaw.local ldap-server
+192.168.200.50 ldap-server.amrdaw.local ldap-server
+
+```
+
+
+3. **Configuracion de DNS (Bind9)**
+`sudo nano /etc/bind/named.conf.options`
+* Forwarders: Introducir la IP que devuelva el comando `ip r` (el gateway).
+* Allow-query: Permitir la red local: `localhost; 192.168.200.0/24;`.
+
+
+4. **Adaptacion de Zonas DNS**
+* Renombrar archivo: `sudo mv /etc/bind/zonas/db.emsdaw.local /etc/bind/zonas/db.amrdaw.local`
+* Editar contenido: `sudo nano /etc/bind/zonas/db.amrdaw.local` (Reemplazar todas las menciones de emsdaw por amrdaw).
+* Vincular zona: `sudo nano /etc/bind/named.conf.local` (Cambiar el nombre de zona a `amrdaw.local` y la ruta del archivo).
+* Reiniciar: `sudo systemctl restart bind9`
+
+
 
 ---
 
-## 0. Escenario y Herramientas
+## 2. INSTALACION Y CARGA DE LDAP
 
-- **IP Servidor:** `11.0.21.10` | **Dominio:** `amrdaw.local`
-- **IP Cliente:** `11.0.21.50`
-- **Herramienta LDIF:** [🚀 Generador Pro](https://ldap-generate-wxb3-git-master-alexms-projects-4a3a1365.vercel.app/) (Usa esto para crear `init.ldif` y `mod.ldif`).
+**[SERVIDOR]**
 
----
-
-## 1. Instalación y Configuración Servidor
-
+1. **Instalacion**
 ```bash
 sudo apt update && sudo apt install -y slapd ldap-utils
-# Reconfigurar para asegurar dominio correcto
-sudo dpkg-reconfigure -plow slapd
 
 ```
 
-_(Configuración: DNS=`amrdaw.local`, Org=`amrdaw`, Admin Pass=`tu_clave`, Quitar base de datos: **Sí**)_
+
+2. **Reconfiguracion (Asistente)**
+`sudo dpkg-reconfigure -plow slapd`
+* Omitir configuracion: No
+* Dominio: `amrdaw.local`
+* Organizacion: `amrdaw`
+* Contraseña: `tu_contraseña`
+* Mover base de datos antigua: **SI** (esto limpia el rastro del examen anterior).
+
+
+3. **Carga de Datos (LDIF)**
+* Generar el contenido con la herramienta Vercel (opcion Instalacion).
+* Crear archivo: `cat <<EOF > /tmp/init.ldif` (pegar contenido) `EOF`.
+* Inyectar: `ldapadd -x -D "cn=admin,dc=amrdaw,dc=local" -W -f /tmp/init.ldif`
+
+
 
 ---
 
-## 2. Carga Masiva (Uso de la Herramienta HTML)
+## 3. CONFIGURACION DEL CLIENTE
 
-1. **En el Generador:** Configura la ruta (ej. `/tmp/`) y el nombre (`init.ldif`).
-2. **Pegar lista:** `usuario, grupo`.
-3. **En la Terminal del Servidor:** Copia el bloque `cat <<EOF` para crear el archivo y luego:
+**[CLIENTE]**
 
+1. **Instalacion de Modulos de Autenticacion**
 ```bash
-ldapadd -x -D "cn=admin,dc=amrdaw,dc=local" -W -f /tmp/init.ldif
-
-```
-
----
-
-## 3. Configuración del Cliente (Logueo LDAP)
-
-En la máquina **cliente**, necesitamos que el sistema "mire" hacia LDAP para buscar usuarios.
-
-### 3.1 Instalación de paquetes
-
-```bash
-sudo apt update
 sudo apt install -y libnss-ldap libpam-ldap ldap-utils
 
 ```
 
-**Durante el asistente de instalación:**
 
-- LDAP server URI: `ldap://11.0.21.10`
-- Distinguished name (Search base): `dc=amrdaw,dc=local`
-- LDAP version: `3`
-- Make local root Database admin: **Yes**
-- Does LDAP database require login? **No**
+* URI: `ldap://192.168.200.50`
+* Base DN: `dc=amrdaw,dc=local`
+* LDAP Version: 3
+* Make local root Database admin: Yes
+* Does LDAP database require login: No
 
-### 3.2 Configurar NSS (Name Service Switch)
 
-Dile al sistema que busque usuarios en LDAP:
-
-```bash
-sudo nano /etc/nsswitch.conf
-
-```
-
-Modifica estas tres líneas añadiendo `ldap`:
-
+2. **Configuracion NSS (Name Service Switch)**
+`sudo gedit /etc/nsswitch.conf`
+Añadir `ldap` al final de estas lineas:
 ```text
 passwd:         files systemd ldap
 group:          files systemd ldap
@@ -82,57 +94,44 @@ shadow:         files ldap
 
 ```
 
-### 3.3 Crear carpetas HOME automáticamente
 
-Para que al loguearte con un usuario de LDAP se cree su `/home/usuario`:
-
-```bash
-sudo nano /etc/pam.d/common-session
-
-```
-
-Añade esta línea al final del archivo:
-
+3. **Configuracion PAM (Creacion Automatica de Home)**
+`sudo gedit /etc/pam.d/common-session`
+Añadir al final de todo el archivo:
 ```text
-session required pam_mkhomedir.so skel=/etc/skel umask=077
+session optional pam_mkhomedir.so skel=/etc/skel umask=077
 
 ```
 
-### 3.4 Reiniciar servicios
 
-```bash
-sudo systemctl restart nscd
-# Si no tienes nscd, no pasa nada, el cambio en PAM/NSS es instantáneo.
-
-```
 
 ---
 
-## 4. Comprobación y Troubleshooting
+## 4. MODIFICACIONES EN CALIENTE
 
-### Comprobar si el cliente "ve" a los usuarios LDAP:
+**[SERVIDOR]**
 
+Si necesitas borrar un usuario, añadirlo a un grupo extra o cambiar su loginShell:
+
+1. Generar el LDIF en la pestaña Modificaciones de la herramienta Vercel.
+2. Crear el archivo: `cat <<EOF > /tmp/mod.ldif` (pegar contenido) `EOF`.
+3. Aplicar cambios:
 ```bash
-# Debería devolver los datos del usuario creado con tu HTML
-getent passwd pepe
-id pepe
+ldapmodify -x -D "cn=admin,dc=amrdaw,dc=local" -W -f /tmp/mod.ldif
 
 ```
 
-### Probar logueo local:
 
-```bash
-su - pepe
-
-```
-
-### Errores en el logueo (Troubleshooting):
-
-| Síntoma                         | Causa                                       | Solución                                               |
-| ------------------------------- | ------------------------------------------- | ------------------------------------------------------ |
-| `getent` no devuelve nada       | Error en URI o Base DN en el cliente        | `sudo dpkg-reconfigure ldap-auth-config`               |
-| Pide clave pero falla           | Password en el LDIF no es SHA o es distinta | Regenera el LDIF con tu herramienta asegurando el Hash |
-| Loguea pero dice "No directory" | Falta la línea en `common-session`          | Añadir `pam_mkhomedir.so`                              |
-| El servidor no responde         | Firewall activo                             | `sudo ufw allow 389/tcp`                               |
 
 ---
+
+## 5. COMPROBACIONES FINALES
+
+| Comando | Ubicacion | Resultado Esperado |
+| --- | --- | --- |
+| `nslookup google.es` | **[SERVIDOR]** | Debe resolver (Forwarders correctos). |
+| `getent passwd pepe` | **[CLIENTE]** | Debe mostrar la linea del usuario LDAP. |
+| `su - pepe` | **[CLIENTE]** | Debe iniciar sesion y crear el directorio /home/pepe. |
+| `ldapsearch -x -b "dc=amrdaw,dc=local"` | **[SERVIDOR]** | Debe listar todo el arbol del directorio. |
+
+

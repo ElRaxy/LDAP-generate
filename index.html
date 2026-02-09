@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>LDAP AlexMico</title>
+    <title>LDAP Tool - AlexMico - Jerarquia Infinita</title>
     <style>
       :root {
         --color-canvas-default: #0d1117;
@@ -10,152 +10,103 @@
         --color-border-default: #30363d;
         --color-border-muted: #21262d;
         --color-fg-default: #c9d1d9;
-        --color-fg-muted: #8b949e;
         --color-accent-fg: #58a6ff;
         --color-btn-primary-bg: #238636;
-        --color-btn-primary-hover-bg: #2ea043;
-        --color-btn-bg: #21262d;
-        --color-btn-hover-bg: #30363d;
-        --color-neutral-muted: rgba(110, 118, 129, 0.4);
       }
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
-          Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        font-family: sans-serif;
         background-color: var(--color-canvas-default);
         color: var(--color-fg-default);
         margin: 0;
-        padding: 40px;
+        padding: 20px;
         display: flex;
-        gap: 32px;
-        line-height: 1.5;
+        gap: 20px;
         height: 100vh;
         box-sizing: border-box;
       }
       .sidebar {
-        width: 300px;
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
+        width: 420px;
         overflow-y: auto;
-        padding-right: 16px;
         border-right: 1px solid var(--color-border-muted);
+        padding-right: 15px;
       }
       .main {
         flex-grow: 1;
-        max-width: 900px;
         overflow-y: auto;
+        padding: 0 20px;
       }
       .card {
-        margin-bottom: 24px;
+        background: var(--color-canvas-subtle);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--color-border-default);
+        margin-bottom: 20px;
       }
-      h2 {
-        font-size: 1.5em;
-        font-weight: 600;
-        padding-bottom: 0.3em;
-        border-bottom: 1px solid var(--color-border-muted);
-        margin-top: 24px;
-        margin-bottom: 16px;
-      }
+      h2,
       h3 {
-        font-size: 1.25em;
-        font-weight: 600;
-        margin-top: 24px;
-        margin-bottom: 16px;
+        border-bottom: 1px solid var(--color-border-muted);
+        padding-bottom: 5px;
+        color: var(--color-accent-fg);
+        margin-top: 0;
       }
       label {
         display: block;
-        margin-top: 16px;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: var(--color-fg-default);
+        margin: 10px 0 5px;
+        font-weight: bold;
+        font-size: 12px;
       }
       input,
-      select,
-      textarea {
+      textarea,
+      select {
         width: 100%;
-        box-sizing: border-box;
-        background-color: var(--color-canvas-subtle);
+        background: var(--color-canvas-default);
         border: 1px solid var(--color-border-default);
-        color: var(--color-fg-default);
-        padding: 5px 12px;
-        font-size: 14px;
-        line-height: 20px;
-        border-radius: 6px;
-        outline: none;
-      }
-      input:focus,
-      textarea:focus {
-        border-color: var(--color-accent-fg);
-        box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+        color: white;
+        padding: 8px;
+        border-radius: 4px;
+        box-sizing: border-box;
       }
       button {
-        display: inline-block;
-        padding: 5px 16px;
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 20px;
-        white-space: nowrap;
-        vertical-align: middle;
         cursor: pointer;
-        user-select: none;
-        border: 1px solid var(--color-border-default);
+        padding: 8px 12px;
         border-radius: 6px;
-        appearance: none;
-        background-color: var(--color-btn-bg);
+        border: 1px solid var(--color-border-default);
+        background: #21262d;
         color: var(--color-accent-fg);
-        margin-top: 16px;
-      }
-      button:hover {
-        background-color: var(--color-btn-hover-bg);
-        border-color: var(--color-fg-muted);
-        text-decoration: none;
+        font-weight: bold;
       }
       button.primary {
-        background-color: var(--color-btn-primary-bg);
+        background: var(--color-btn-primary-bg);
         color: white;
-        border-color: rgba(240, 246, 252, 0.1);
+        border: none;
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
       }
-      button.primary:hover {
-        background-color: var(--color-btn-primary-hover-bg);
-      }
-      textarea.code {
-        font-family:
-          ui-monospace,
-          SFMono-Regular,
-          SF Mono,
-          Menlo,
-          Consolas,
-          Liberation Mono,
-          monospace;
-        font-size: 12px;
-        padding: 16px;
-        background-color: var(--color-canvas-subtle);
-        color: #e6edf3;
-        min-height: 200px;
-        margin-top: 16px;
+      .ou-row {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 5px;
+        border-radius: 4px;
       }
       .tab-nav {
         display: flex;
+        gap: 10px;
         border-bottom: 1px solid var(--color-border-muted);
-        margin-bottom: 16px;
+        margin-bottom: 15px;
       }
       .tab-btn {
-        padding: 8px 16px;
-        font-size: 14px;
-        line-height: 20px;
-        color: var(--color-fg-default);
+        padding: 10px;
         cursor: pointer;
-        border: 1px solid transparent;
-        border-bottom: 0;
-        margin-bottom: -1px;
         border-radius: 6px 6px 0 0;
       }
       .tab-btn.active {
-        background-color: var(--color-canvas-default);
-        border-color: var(--color-border-muted);
-        font-weight: 600;
-        border-bottom: 1px solid var(--color-canvas-default);
+        background: var(--color-canvas-subtle);
+        border: 1px solid var(--color-border-default);
+        border-bottom: none;
+        color: var(--color-accent-fg);
       }
       .tab-content {
         display: none;
@@ -163,318 +114,266 @@
       .tab-content.active {
         display: block;
       }
-      .cmd-step {
-        background-color: var(--color-canvas-subtle);
-        border: 1px solid var(--color-border-default);
-        border-radius: 6px;
-        padding: 16px;
-        margin-top: 16px;
-      }
-      .cmd-text {
-        font-family:
-          ui-monospace,
-          SFMono-Regular,
-          SF Mono,
-          Menlo,
-          Consolas,
-          Liberation Mono,
-          monospace;
-        font-size: 12px;
+      textarea.code {
+        font-family: monospace;
+        font-size: 11px;
+        min-height: 200px;
+        background: #000;
         color: #79c0ff;
-        display: block;
-        white-space: pre-wrap;
-        word-break: break-all;
-        margin-top: 8px;
-        padding: 8px;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 4px;
+        margin-top: 10px;
       }
-      .step-title {
-        color: var(--color-fg-muted);
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
+      .cmd-box {
+        background: #000;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #30363d;
+        font-family: monospace;
+        font-size: 11px;
+        white-space: pre-wrap;
+        color: #58a6ff;
+        margin-bottom: 15px;
       }
     </style>
   </head>
   <body>
     <div class="sidebar">
       <div class="card">
-        <h2>Parámetros Base</h2>
+        <h2>CONFIGURACION</h2>
         <label>Dominio</label>
-        <input
-          type="text"
-          id="domain"
-          value="amrdaw.local"
-          oninput="updateAll()"
-        />
-        <label>Password Usuarios</label>
-        <input
-          type="text"
-          id="plainPass"
-          value="amrdaw"
-          oninput="updateAll()"
-        />
-
-        <label>📂 Ruta Trabajo</label>
-        <input
-          type="text"
-          id="workPath"
-          value="/tmp/"
-          placeholder="/home/usuario/"
-          oninput="updateAll()"
-        />
+        <input type="text" id="domain" value="amrdaw.local" />
+        <label>Password por defecto</label>
+        <input type="text" id="plainPass" value="amrdaw" />
+        <label>Ruta Trabajo</label>
+        <input type="text" id="workPath" value="/tmp/" />
       </div>
 
       <div class="card">
-        <h3>Archivos</h3>
-        <label>Archivo Creación (.ldif)</label>
-        <input
-          type="text"
-          id="fileGen"
-          value="init.ldif"
-          placeholder="init.ldif"
-          oninput="updateAll()"
-        />
-        <label>Archivo Modificación (.ldif)</label>
-        <input
-          type="text"
-          id="fileMod"
-          value="mod.ldif"
-          placeholder="mod.ldif"
-          oninput="updateAll()"
-        />
-      </div>
-
-      <div class="card">
-        <h3>Estructura OUs</h3>
-        <label>OU Usuarios</label>
-        <input
-          type="text"
-          id="ouUsers"
-          value="ou=users"
-          oninput="updateAll()"
-        />
-        <label>OU Grupos</label>
-        <input
-          type="text"
-          id="ouGroups"
-          value="ou=groups"
-          oninput="updateAll()"
-        />
+        <h3>JERARQUIA OUS (SUB-OUS INFINITAS)</h3>
+        <p style="font-size: 10px; color: #8b949e; margin-bottom: 10px">
+          Ejemplo: Nombre: DAM, Padre: Alumnos (Alumnos debe existir arriba).
+        </p>
+        <div id="ouContainer">
+          <div class="ou-row">
+            <input
+              type="text"
+              class="ou-name"
+              placeholder="Nombre"
+              value="users"
+            />
+            <input type="text" class="ou-parent" placeholder="Padre" />
+          </div>
+          <div class="ou-row">
+            <input
+              type="text"
+              class="ou-name"
+              placeholder="Nombre"
+              value="groups"
+            />
+            <input type="text" class="ou-parent" placeholder="Padre" />
+          </div>
+        </div>
+        <button onclick="addOU()">Añadir Unidad / Sub-Unidad</button>
       </div>
     </div>
 
     <div class="main">
       <div class="tab-nav">
-        <div id="btn-gen" class="tab-btn active" onclick="openTab('gen')">
-          Instalación
+        <div class="tab-btn active" onclick="switchTab(event, 'genTab')">
+          Instalacion
         </div>
-        <div id="btn-mods" class="tab-btn" onclick="openTab('mods')">
+        <div class="tab-btn" onclick="switchTab(event, 'modTab')">
           Modificaciones
         </div>
       </div>
 
-      <div id="gen" class="tab-content active card">
-        <h3>Crear Usuarios y Grupos</h3>
-        <textarea
-          id="csvInput"
-          style="height: 100px"
-          oninput="updateAll()"
-          placeholder="usuario, grupo"
-        ></textarea>
-        <button class="primary" onclick="generateAll()">Generar LDIF</button>
+      <div id="genTab" class="tab-content active">
+        <div class="card">
+          <label>Nombre Archivo Creacion</label>
+          <input type="text" id="fileGen" value="init.ldif" />
+          <label>Usuarios (usuario, grupo, OU_final)</label>
+          <textarea
+            id="csvInput"
+            placeholder="pepe, alumnos, DAM"
+            style="height: 80px"
+          ></textarea>
+          <button class="primary" onclick="generateGen()">
+            GENERAR CARGA INICIAL
+          </button>
 
-        <textarea id="outputLdif" class="code"></textarea>
-
-        <div class="cmd-step">
-          <span class="step-title">Terminal: Crear archivo</span>
-          <code class="cmd-text" id="step1-gen"
-            >Genera para ver el comando...</code
-          >
-        </div>
-        <div class="cmd-step">
-          <span class="step-title">Terminal: Ejecutar</span>
-          <code class="cmd-text" id="step2-gen"
-            >Genera para ver el comando...</code
-          >
+          <textarea id="outLdifGen" class="code" readonly></textarea>
+          <div class="cmd-box" id="cmd-gen-cat">Sin datos</div>
+          <div class="cmd-box" id="cmd-gen-exec">Sin datos</div>
         </div>
       </div>
 
-      <div id="mods" class="tab-content card">
-        <h3>🔧 Modificaciones Rápidas</h3>
-        <select id="modType" onchange="updateModFields()">
-          <option value="shell">Cambiar Shell</option>
-          <option value="mail">Cambiar Email</option>
-          <option value="delete">Borrar Usuario</option>
-          <option value="addgroup">Añadir a Grupo Extra</option>
-        </select>
-        <div id="modFields"></div>
-        <button class="primary" onclick="generateMod()">
-          Generar Modificación
-        </button>
+      <div id="modTab" class="tab-content">
+        <div class="card">
+          <label>Nombre Archivo Modificacion</label>
+          <input type="text" id="fileMod" value="mod.ldif" />
+          <label>Tipo de Operacion</label>
+          <select id="modType" onchange="updateModFields()">
+            <option value="shell">Cambiar Shell</option>
+            <option value="mail">Cambiar Email</option>
+            <option value="delete">Borrar Usuario</option>
+            <option value="group">Añadir a Grupo Extra</option>
+          </select>
+          <div id="modFields" style="margin-top: 10px"></div>
+          <button class="primary" onclick="generateMod()">
+            GENERAR MODIFICACION
+          </button>
 
-        <textarea id="outputMod" class="code"></textarea>
-
-        <div class="cmd-step">
-          <span class="step-title">Terminal: Crear archivo</span>
-          <code class="cmd-text" id="step1-mod"
-            >Genera para ver el comando...</code
-          >
-        </div>
-        <div class="cmd-step">
-          <span class="step-title">Terminal: Ejecutar</span>
-          <code class="cmd-text" id="step2-mod"
-            >Genera para ver el comando...</code
-          >
+          <textarea id="outLdifMod" class="code" readonly></textarea>
+          <div class="cmd-box" id="cmd-mod-cat">Sin datos</div>
+          <div class="cmd-box" id="cmd-mod-exec">Sin datos</div>
         </div>
       </div>
     </div>
 
     <script>
-      async function sha1Hash(text) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(text);
-        const hashBuffer = await crypto.subtle.digest("SHA-1", data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const base64Hash = btoa(String.fromCharCode(...hashArray));
-        return `{SHA}${base64Hash}`;
+      function addOU() {
+        const div = document.createElement('div')
+        div.className = 'ou-row'
+        div.innerHTML = `<input type="text" class="ou-name" placeholder="Nombre"><input type="text" class="ou-parent" placeholder="Padre"><button onclick="this.parentElement.remove()">X</button>`
+        document.getElementById('ouContainer').appendChild(div)
       }
 
-      function getBaseDn() {
-        return document
-          .getElementById("domain")
-          .value.split(".")
-          .map((p) => `dc=${p}`)
-          .join(",");
-      }
-
-      function getFilePath(id) {
-        let path = document.getElementById("workPath").value.trim();
-        let name =
-          document.getElementById(id).value.trim() ||
-          document.getElementById(id).placeholder;
-        if (path !== "" && !path.endsWith("/")) path += "/";
-        return path + name;
-      }
-
-      function openTab(id) {
+      function switchTab(evt, tabId) {
         document
-          .querySelectorAll(".tab-content")
-          .forEach((c) => c.classList.remove("active"));
+          .querySelectorAll('.tab-content')
+          .forEach(t => t.classList.remove('active'))
         document
-          .querySelectorAll(".tab-btn")
-          .forEach((b) => b.classList.remove("active"));
-        document.getElementById(id).classList.add("active");
-        document.getElementById("btn-" + id).classList.add("active");
+          .querySelectorAll('.tab-btn')
+          .forEach(b => b.classList.remove('active'))
+        document.getElementById(tabId).classList.add('active')
+        evt.currentTarget.classList.add('active')
       }
 
-      function updateAll() {
-        /* Refresco dinámico opcional */
+      async function sha1(t) {
+        const e = new TextEncoder().encode(t)
+        const b = await crypto.subtle.digest('SHA-1', e)
+        return `{SHA}${btoa(String.fromCharCode(...new Uint8Array(b)))}`
       }
 
-      async function generateAll() {
-        const baseDn = getBaseDn();
-        const path = getFilePath("fileGen");
-        const ouU = document.getElementById("ouUsers").value.trim();
-        const ouG = document.getElementById("ouGroups").value.trim();
-        const passHash = await sha1Hash(
-          document.getElementById("plainPass").value,
-        );
-        const raw = document.getElementById("csvInput").value;
+      function resolveDN(ouName, ouList, baseDn) {
+        const ou = ouList.find(o => o.name === ouName)
+        if (!ou) return `ou=${ouName},${baseDn}`
+        if (!ou.parent) return `ou=${ouName},${baseDn}`
+        return `ou=${ouName},${resolveDN(ou.parent, ouList, baseDn)}`
+      }
 
-        const suffixU = ouU ? `${ouU},${baseDn}` : baseDn;
-        const suffixG = ouG ? `${ouG},${baseDn}` : baseDn;
+      async function generateGen() {
+        const domain = document.getElementById('domain').value
+        const baseDn = domain
+          .split('.')
+          .map(p => `dc=${p}`)
+          .join(',')
+        const pass = await sha1(document.getElementById('plainPass').value)
+        const path =
+          document.getElementById('workPath').value +
+          document.getElementById('fileGen').value
 
-        let ldif = `# --- LDAP INIT ---\n`;
-        function createOu(p, b) {
-          if (!p) return "";
-          let current = b,
-            res = "";
-          p.split(",")
-            .reverse()
-            .forEach((part) => {
-              current = part + "," + current;
-              res += `dn: ${current}\nobjectClass: organizationalUnit\nou: ${part.split("=")[1]}\n\n`;
-            });
-          return res;
-        }
+        const ouRows = document.querySelectorAll('.ou-row')
+        let ouList = []
+        ouRows.forEach(r => {
+          const name = r.querySelector('.ou-name').value.trim()
+          const parent = r.querySelector('.ou-parent').value.trim()
+          if (name) ouList.push({ name, parent })
+        })
 
-        ldif += createOu(ouU, baseDn);
-        if (ouG && ouG !== ouU) ldif += createOu(ouG, baseDn);
+        let ldif = '# --- OUs ---\n'
+        ouList.forEach(ou => {
+          ldif += `dn: ${resolveDN(ou.name, ouList, baseDn)}\nobjectClass: organizationalUnit\nou: ${ou.name}\n\n`
+        })
 
+        const raw = document.getElementById('csvInput').value.trim()
         let groups = new Set(),
-          gMap = {},
           gid = 2000,
-          uid = 1001;
-        let groupPart = "",
-          userPart = "";
+          uid = 1001,
+          gLdif = '# --- GRUPOS ---\n',
+          uLdif = '# --- USUARIOS ---\n'
 
-        raw.split("\n").forEach((line) => {
-          if (!line.includes(",")) return;
-          let [u, g] = line.split(",").map((s) => s.trim());
+        raw.split('\n').forEach(line => {
+          const p = line.split(',').map(s => s.trim())
+          if (p.length < 2) return
+          const [u, g, targetOu] = p
+          const uOuDn = resolveDN(targetOu, ouList, baseDn)
+          const gOuDn = ouList.some(o => o.name === 'groups')
+            ? resolveDN('groups', ouList, baseDn)
+            : uOuDn
+
           if (!groups.has(g)) {
-            groups.add(g);
-            gMap[g] = gid;
-            groupPart += `dn: cn=${g},${suffixG}\nobjectClass: posixGroup\ncn: ${g}\ngidNumber: ${gid}\n\n`;
-            gid++;
+            groups.add(g)
+            gLdif += `dn: cn=${g},${gOuDn}\nobjectClass: posixGroup\ncn: ${g}\ngidNumber: ${gid}\n\n`
+            gid++
           }
-          userPart += `dn: uid=${u},${suffixU}\nobjectClass: inetOrgPerson\nobjectClass: posixAccount\ncn: ${u}\nsn: ${u}\nuid: ${u}\nuidNumber: ${uid}\ngidNumber: ${gMap[g]}\nhomeDirectory: /home/${u}\nloginShell: /bin/bash\nuserPassword: ${passHash}\n\n`;
-          uid++;
-        });
+          uLdif += `dn: uid=${u},${uOuDn}\nobjectClass: inetOrgPerson\nobjectClass: posixAccount\ncn: ${u}\nsn: ${u}\nuid: ${u}\nuidNumber: ${uid}\ngidNumber: ${gid - 1}\nhomeDirectory: /home/${u}\nloginShell: /bin/bash\nuserPassword: ${pass}\n\n`
+          uid++
+        })
 
-        const finalLdif = ldif + groupPart + userPart;
-        document.getElementById("outputLdif").value = finalLdif;
-        document.getElementById("step1-gen").innerText =
-          `cat <<EOF > ${path}\n${finalLdif}EOF`;
-        document.getElementById("step2-gen").innerText =
-          `ldapadd -x -D "cn=admin,${baseDn}" -W -f ${path}`;
+        const final = ldif + gLdif + uLdif
+        document.getElementById('outLdifGen').value = final
+        document.getElementById('cmd-gen-cat').innerText =
+          `cat <<EOF > ${path}\n${final}EOF`
+        document.getElementById('cmd-gen-exec').innerText =
+          `ldapadd -x -D "cn=admin,${baseDn}" -W -f ${path}`
       }
 
       function updateModFields() {
-        const type = document.getElementById("modType").value;
-        const container = document.getElementById("modFields");
-        let html = `<label>UID Usuario</label><input type="text" id="mUid" placeholder="uid_usuario" oninput="generateMod()">`;
-        if (type === "shell")
-          html += `<label>Nuevo Shell</label><input type="text" id="mVal" value="/bin/false" oninput="generateMod()">`;
-        if (type === "mail")
-          html += `<label>Nuevo Mail</label><input type="text" id="mVal" value="user@mail.com" oninput="generateMod()">`;
-        if (type === "addgroup")
-          html += `<label>Grupo Extra</label><input type="text" id="mVal" value="admins" oninput="generateMod()">`;
-        container.innerHTML = html;
+        const type = document.getElementById('modType').value
+        const container = document.getElementById('modFields')
+        container.innerHTML = `<label>UID Usuario</label><input type="text" id="mUid" placeholder="pepe"><label>OU donde está (Nombre)</label><input type="text" id="mOu" placeholder="DAM">`
+        if (type !== 'delete')
+          container.innerHTML += `<label>Valor / Grupo</label><input type="text" id="mVal">`
       }
 
       function generateMod() {
-        const baseDn = getBaseDn();
-        const path = getFilePath("fileMod");
-        const ouU = document.getElementById("ouUsers").value.trim();
-        const ouG = document.getElementById("ouGroups").value.trim();
-        const suffixU = ouU ? `${ouU},${baseDn}` : baseDn;
-        const suffixG = ouG ? `${ouG},${baseDn}` : baseDn;
-        const type = document.getElementById("modType").value;
-        const uid = document.getElementById("mUid").value;
-        const val = document.getElementById("mVal")
-          ? document.getElementById("mVal").value
-          : "";
+        const domain = document.getElementById('domain').value
+        const baseDn = domain
+          .split('.')
+          .map(p => `dc=${p}`)
+          .join(',')
+        const type = document.getElementById('modType').value
+        const uid = document.getElementById('mUid').value
+        const ouName = document.getElementById('mOu').value
+        const val = document.getElementById('mVal')
+          ? document.getElementById('mVal').value
+          : ''
+        const path =
+          document.getElementById('workPath').value +
+          document.getElementById('fileMod').value
 
-        let ldif = "";
-        if (type === "shell" || type === "mail") {
-          let attr = type === "shell" ? "loginShell" : "mail";
-          ldif = `dn: uid=${uid},${suffixU}\nchangetype: modify\nreplace: ${attr}\n${attr}: ${val}`;
-        } else if (type === "delete") {
-          ldif = `dn: uid=${uid},${suffixU}\nchangetype: delete`;
-        } else if (type === "addgroup") {
-          ldif = `dn: cn=${val},${suffixG}\nchangetype: modify\nadd: memberUid\nmemberUid: ${uid}`;
+        // Intentar resolver el DN de la OU desde la lista actual
+        const ouRows = document.querySelectorAll('.ou-row')
+        let ouList = []
+        ouRows.forEach(r => {
+          const n = r.querySelector('.ou-name').value.trim()
+          const p = r.querySelector('.ou-parent').value.trim()
+          if (n) ouList.push({ name: n, parent: p })
+        })
+
+        const targetOuDn = resolveDN(ouName, ouList, baseDn)
+        const uDn = `uid=${uid},${targetOuDn}`
+
+        let ldif = ''
+        if (type === 'shell' || type === 'mail') {
+          const attr = type === 'shell' ? 'loginShell' : 'mail'
+          ldif = `dn: ${uDn}\nchangetype: modify\nreplace: ${attr}\n${attr}: ${val}`
+        } else if (type === 'delete') {
+          ldif = `dn: ${uDn}\nchangetype: delete`
+        } else if (type === 'group') {
+          const gOuDn = ouList.some(o => o.name === 'groups')
+            ? resolveDN('groups', ouList, baseDn)
+            : targetOuDn
+          ldif = `dn: cn=${val},${gOuDn}\nchangetype: modify\nadd: memberUid\nmemberUid: ${uid}`
         }
 
-        document.getElementById("outputMod").value = ldif;
-        document.getElementById("step1-mod").innerText =
-          `cat <<EOF > ${path}\n${ldif}\nEOF`;
-        document.getElementById("step2-mod").innerText =
-          `ldapmodify -x -D "cn=admin,${baseDn}" -W -f ${path}`;
+        document.getElementById('outLdifMod').value = ldif
+        document.getElementById('cmd-mod-cat').innerText =
+          `cat <<EOF > ${path}\n${ldif}\nEOF`
+        document.getElementById('cmd-mod-exec').innerText =
+          `ldapmodify -x -D "cn=admin,${baseDn}" -W -f ${path}`
       }
-
-      updateModFields();
+      updateModFields()
     </script>
   </body>
 </html>
