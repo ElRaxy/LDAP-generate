@@ -23,11 +23,11 @@ sudo hostnamectl set-hostname ldap-server.amrdaw.local
 
 3. **Configuracion de DNS (Bind9)**
 `sudo nano /etc/bind/named.conf.options`
-* Forwarders: Introducir la IP que devuelva el comando `ip r` (el gateway).
+* Forwarders: Introducir la IP que devuelva el comando `ip r` o 10.2.1.254 si no va(10.0.2.2) (el gateway).
 * Allow-query: Permitir la red local: `localhost; 192.168.200.0/24;`.
 
 
-4. **Adaptacion de Zonas DNS**
+1. **Adaptacion de Zonas DNS**
 * Renombrar archivo: `sudo mv /etc/bind/zonas/db.emsdaw.local /etc/bind/zonas/db.amrdaw.local`
 * Editar contenido: `sudo nano /etc/bind/zonas/db.amrdaw.local` (Reemplazar todas las menciones de emsdaw por amrdaw).
 * Vincular zona: `sudo nano /etc/bind/named.conf.local` (Cambiar el nombre de zona a `amrdaw.local` y la ruta del archivo).
